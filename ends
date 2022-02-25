@@ -1,0 +1,78 @@
+#!/usr/bin/env php
+<?php
+const PACKAGE_NAME = 'ends/ends';
+
+$composer_autoloader = null;
+$root = __DIR__;
+while (!isset($composer_autoloader) && dirname($root) !== $root) {
+	if (is_file($composer_file = $root . DIRECTORY_SEPARATOR . 'composer.json') && is_readable($composer_file)) {
+		 if (($composer_data = @file_get_contents($composer_file)) && ($composer_data = @json_decode($composer_data, true))) {
+			 if (is_file($autoload_file = $root . DIRECTORY_SEPARATOR . ($composer_data['config']['vendor-dir'] ?? 'vendor') . DIRECTORY_SEPARATOR . 'autoload.php') && is_readable($autoload_file)) {
+				 $composer_autoloader = require_once $autoload_file;
+			 }
+			 unset($autoload_file);
+		 }
+		 unset($composer_data);
+	}
+	unset($composer_file);
+}
+
+if (!isset($composer_autoloader)) {
+	$composer_file = null;
+
+	$PATH = getenv('PATH') ?: getenv('Path') ?: getenv('path');
+	$PATH = explode(PATH_SEPARATOR, $PATH);
+	$PATH = array_map('realpath', $PATH);
+	$PATH = array_filter($PATH);
+	$PATH = array_unique($PATH);
+
+	$EXT = getenv('PATHEXT') ?: getenv('PathExt') ?: getenv('pathext');
+	$EXT = explode(PATH_SEPARATOR, $EXT);
+	$EXT = array_map('strtolower', $EXT);
+	$EXT = array_filter($EXT);
+	$EXT = array_unique($EXT);
+	$EXT = array_map('trim', $EXT);
+	$EXT = array_filter($EXT);
+	$EXT = array_unique($EXT);
+
+	foreach($PATH as $path) {
+		if (is_file($composer_file = $path . DIRECTORY_SEPARATOR . 'composer') || is_file($composer_file = $path . DIRECTORY_SEPARATOR . 'composer.phar')) {
+			$composer_file = realpath($composer_file);
+			break;
+		}
+		else {
+			foreach($EXT as $ext) {
+				if (is_file($composer_file = $path . DIRECTORY_SEPARATOR . 'composer' . $ext) || is_file($composer_file = $path . DIRECTORY_SEPARATOR . 'composer.' . $ext)) {
+					$composer_file = realpath($composer_file);
+					break;
+				}
+			}
+		}
+	}
+
+	if (is_file($composer_file)) {
+		fprintf(
+			STDERR,
+			'Running `%s create-project %s` or `%s require %s` to install `%s` package.' . PHP_EOL,
+			$composer_file,
+			PACKAGE_NAME,
+			$composer_file,
+			PACKAGE_NAME,
+			PACKAGE_NAME
+		);
+	}
+	else {
+		fwrite(STDERR,
+			'Unable to find composer.phar or composer in PATH.' . PHP_EOL .
+			'Please install composer before running this script.' . PHP_EOL .
+			'See https://getcomposer.org/download/ for installation instructions.' . PHP_EOL
+		);
+	}
+	exit(1);
+}
+
+fprintf(
+	STDOUT,
+	'Composer root: %s' . PHP_EOL,
+	$root
+);
