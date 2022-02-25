@@ -1,0 +1,42 @@
+{
+  "name": "ends/ends",
+  "type": "project",
+  "description": "A PHP framework for designing and developing static and dynamic fullstack websites and applications.",
+  "homepage": "https://packagist.org/packages/ends/ends",
+  "license": "Apache-2.0",
+  "keywords": [
+	"framework",
+	"frontend",
+	"backend",
+	"fullstack",
+	"dynamic",
+	"static",
+	"design",
+	"develop",
+	"deploy",
+	"website",
+	"application"
+  ],
+  "authors": [{
+	"name": "SIGUI Kessé Emmanuel",
+	"homepage": "https://about.sikessem.com",
+	"email": "developer@sikessem.com",
+	"role": "Developer"
+  }],
+  "support": {
+	"source": "https://github.com/skefoss/ends",
+	"issues": "https://github.com/skefoss/ends/issues"
+  },
+  "require": {
+	"php": ">=8.0"
+  },
+  "config": {
+	"web-dir": "client",
+	"vendor-dir": "php_packages",
+	"preferred-install": "dist",
+	"sort-packages": true
+  },
+  "bin": "./ends",
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
